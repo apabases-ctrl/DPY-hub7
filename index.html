@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dypsy Cloud - Ocean luxury</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <style>
+        :root { --accent: #60a5fa; --vip: #f472b6; --glass: rgba(255, 255, 255, 0.02); }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        @keyframes oceanWave { 0%, 100% { transform: translateY(0) rotate(1deg); } 50% { transform: translateY(-30px) rotate(-1deg); } }
+        body { background: #020617; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; }
+
+        /* GATE SCREEN */
+        #gate-screen { position: fixed; inset: 0; background: #020617; z-index: 99999; display: flex; justify-content: center; align-items: center; }
+        .gate-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 40px; text-align: center; width: 90%; max-width: 350px; }
+
+        /* APP CONTENT */
+        .main-card { background: var(--glass); backdrop-filter: blur(60px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 50px; width: 100%; max-width: 950px; animation: oceanWave 12s infinite ease-in-out; box-shadow: 0 60px 150px rgba(0,0,0,0.8); display: none; }
+        
+        .tab-wrap { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab { flex:1; padding:15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#fff; cursor:pointer; font-weight:bold; transition: 0.3s; }
+        .tab.active { background: var(--accent); }
+
+        input, textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 20px; color:#fff; margin-bottom: 20px; outline: none; }
+        .upload-zone { border: 2px dashed rgba(255,255,255,0.1); padding: 60px; border-radius: 30px; text-align: center; cursor: pointer; }
+        
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 10000; }
+        .dypsy-notif { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--accent); padding: 15px 25px; border-radius: 20px; margin-bottom: 10px; transform: translateX(120%); transition: 0.5s; }
+        .dypsy-notif.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <div id="notification-container"></div>
+
+    <div id="gate-screen">
+        <div class="gate-card">
+            <h1 style="margin-bottom: 10px;">Dypsy <span style="color:var(--accent)">Cloud</span></h1>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 30px;">Login asli via Firebase Secure</p>
+            <button onclick="loginWithGoogle()" style="width:100%; padding:15px; border-radius:15px; border:none; background:#fff; font-weight:bold; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;"><i class="fab fa-google"></i> Google Login</button>
+            <button onclick="loginWithGitHub()" style="width:100%; padding:15px; border-radius:15px; border:none; background:#24292e; color:#fff; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;"><i class="fab fa-github"></i> GitHub Login</button>
+        </div>
+    </div>
+
+    <div class="main-card" id="app-card">
+        <div class="tab-wrap">
+            <button class="tab active" id="btnS" onclick="switchMode('S')">Standard Upload</button>
+            <button class="tab" id="btnV" onclick="switchMode('V')">VIP Paste Code</button>
+        </div>
+
+        <input type="text" id="webName" placeholder="Nama Project Website">
+        
+        <div id="uiS">
+            <div class="upload-zone" onclick="document.getElementById('f').click()">
+                <i class="fas fa-cloud-arrow-up fa-3x" style="color: var(--accent); margin-bottom: 15px;"></i>
+                <p id="fn">Pilih File .html</p>
+                <input type="file" id="f" hidden accept=".html" onchange="load(this)">
+            </div>
+        </div>
+
+        <div id="uiV" style="display: none;">
+            <div id="vipLock">
+                <input type="text" id="vipCodeInput" placeholder="Masukkan 6 Digit Kode Aktivasi VIP">
+                <p style="font-size: 0.8rem; color: #64748b; text-align: center;">Kode otomatis dikirim ke bot DC admin saat Anda login.</p>
+            </div>
+            <textarea id="vipArea" style="display: none;" placeholder="Paste kodingan HTML di sini..."></textarea>
+        </div>
+
+        <button onclick="startDeploy()" id="deployBtn" style="width:100%; padding:25px; border-radius:25px; border:none; background:linear-gradient(135deg, #3b82f6, #8b5cf6); color:#fff; font-weight:900; margin-top:20px; cursor:pointer;">LUNCURKAN</button>
+    </div>
+
+    <script>
+        // === KONFIGURASI FIREBASE (TEMPEL MILIKMU DI SINI) ===
+        const firebaseConfig = {
+            apiKey: "AIzaSy...", 
+            authDomain: "project-id.firebaseapp.com",
+            projectId: "project-id",
+            storageBucket: "project-id.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1451651757955485800/RNyrq16gWkU3y0JhCYEWYsRAe482nGDNxB1054QqiUiH17LiBtyRyz8DFcqshTpot2zH';
+        let secretVIPCode = null;
+        let isVipActive = false;
+        let currentMode = 'S';
+
+        function showNotif(msg) {
+            const container = document.getElementById('notification-container');
+            const n = document.createElement('div');
+            n.className = 'dypsy-notif';
+            n.innerHTML = `<b>JAYX SECURE:</b><br>${msg}`;
+            container.appendChild(n);
+            setTimeout(() => n.classList.add('show'), 100);
+            setTimeout(() => { n.classList.remove('show'); setTimeout(() => n.remove(), 500); }, 4000);
+        }
+
+        // LOGIN GOOGLE ASLI
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then(result => handleAuthSuccess(result.user, 'Google')).catch(err => showNotif(err.message));
+        }
+
+        // LOGIN GITHUB ASLI
+        function loginWithGitHub() {
+            const provider = new firebase.auth.GithubAuthProvider();
+            auth.signInWithPopup(provider).then(result => handleAuthSuccess(result.user, 'GitHub')).catch(err => showNotif(err.message));
+        }
+
+        async function handleAuthSuccess(user, provider) {
+            // Generate Kode VIP unik setiap login
+            secretVIPCode = Math.floor(100000 + Math.random() * 900000);
+            
+            // Kirim Detail ke Discord
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: "JAYX SECURE MONITOR",
+                    embeds: [{
+                        title: "🚀 USER LOGIN BERHASIL (ASLI)",
+                        color: 3447003,
+                        fields: [
+                            { name: "Nama", value: user.displayName || "No Name", inline: true },
+                            { name: "Email", value: user.email, inline: true },
+                            { name: "Provider", value: provider, inline: true },
+                            { name: "🔑 KODE VIP", value: `**${secretVIPCode}**` }
+                        ]
+                    }]
+                })
+            });
+
+            document.getElementById('gate-screen').style.display = 'none';
+            document.getElementById('app-card').style.display = 'block';
+            showNotif(`Selamat datang, ${user.displayName}!`);
+        }
+
+        function switchMode(m) {
+            currentMode = m;
+            document.getElementById('uiS').style.display = m === 'S' ? 'block' : 'none';
+            document.getElementById('uiV').style.display = m === 'V' ? 'block' : 'none';
+            document.getElementById('btnS').className = m === 'S' ? 'tab active' : 'tab';
+            document.getElementById('btnV').className = m === 'V' ? 'tab active' : 'tab';
+        }
+
+        function startDeploy() {
+            if(currentMode === 'V' && !isVipActive) {
+                const input = document.getElementById('vipCodeInput').value;
+                if(input == secretVIPCode) {
+                    isVipActive = true;
+                    document.getElementById('vipLock').style.display = 'none';
+                    document.getElementById('vipArea').style.display = 'block';
+                    showNotif("Fitur VIP Terbuka!");
+                } else {
+                    showNotif("Kode Salah! Cek Discord Admin.");
+                }
+                return;
+            }
+            showNotif("Memproses Deployment...");
+        }
+    </script>
+</body>
+</html>
