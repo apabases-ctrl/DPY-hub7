@@ -3,902 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DYPSY NGLSPAMMER</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>NGL Message Sender</title>
     <style>
-        :root { 
-            --accent: #60a5fa; 
-            --glass: rgba(255, 255, 255, 0.02); 
-            --dark-bg: #020617;
-            --card-bg: rgba(15, 23, 42, 0.9);
-            --border-color: rgba(96, 165, 250, 0.3);
-        }
-        
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        
-        @keyframes oceanWave {
-            0%, 100% { transform: translateY(0) rotate(1deg); }
-            50% { transform: translateY(-30px) rotate(-1deg); }
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: #020617; 
-            color: #fff; 
-            min-height: 100vh; 
-            padding: 60px 20px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            background: #0f172a; 
+            color: white; 
+            font-family: sans-serif; 
+            padding: 20px; 
+            min-height: 100vh;
         }
-
-        /* BACKGROUND CLOUD */
-        .cloud-bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 20%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* NOTIFIKASI - DIHAPUS GLOW */
-        #notification-container {
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            z-index: 10000;
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px;
-        }
-        
-        .dypsy-notif {
-            background: rgba(15, 23, 42, 0.8); 
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--accent); 
-            border-radius: 20px;
-            padding: 15px 25px; 
-            color: #fff; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* DIHAPUS: inset 0 0 10px rgba(96, 165, 250, 0.2) */
-            transform: translateX(120%); 
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .dypsy-notif.show { 
-            transform: translateX(0); 
-        }
-        
-        .dypsy-notif i { 
-            font-size: 1.2rem; 
-            color: var(--accent); 
-        }
-
-        /* HEADER */
-        .main-header {
-            margin-bottom: 50px; 
-            text-align: center;
-        }
-        
-        .main-header h1 {
-            font-size: 4rem; 
-            font-weight: 900;
-            letter-spacing: -1px;
-        }
-        
-        .main-header span {
-            color: var(--accent);
-        }
-
-        .subtitle {
-            color: #94a3b8;
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
-
-        /* MAIN CONTAINER */
-        .main-card { 
-            background: var(--glass); 
-            backdrop-filter: blur(60px); 
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 15px; }
+        h1 { color: #3b82f6; margin-bottom: 10px; }
+        .panel { 
+            background: rgba(30, 41, 59, 0.8); 
+            padding: 25px; 
+            border-radius: 15px; 
+            margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px; 
-            padding: 50px; 
-            width: 100%; 
-            max-width: 1000px; 
-            animation: oceanWave 12s infinite ease-in-out; 
-            margin-bottom: 60px;
-            box-shadow: 0 60px 150px rgba(0,0,0,0.8);
         }
-
-        /* STATUS BAR - DIHAPUS GLOW */
-        .status-bar {
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #cbd5e1; }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+        textarea { 
+            min-height: 150px; 
+            resize: vertical;
+            font-family: monospace;
+        }
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover { background: #dc2626; }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            background: rgba(30, 41, 59, 0.8);
-            padding: 25px;
-            border-radius: 30px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-        }
-        
-        .status-item {
-            text-align: center;
-        }
-        
-        .status-label {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-bottom: 10px;
-        }
-        
-        .status-value {
-            color: var(--accent);
-            font-weight: bold;
-            font-size: 1.8rem;
-            /* DIHAPUS: text-shadow: 0 0 15px rgba(96, 165, 250, 0.5); */
-        }
-
-        /* INPUT GROUPS */
-        .input-group {
-            margin-bottom: 35px;
-        }
-        
-        .input-label {
-            display: block;
-            margin-bottom: 15px;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .input-label i {
-            font-size: 1.3rem;
-        }
-        
-        .input-field {
-            width: 100%;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 22px;
-            border-radius: 20px;
-            color: #fff;
-            margin-bottom: 20px;
-            outline: none;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .input-field:focus {
-            border-color: var(--accent);
-            /* DIHAPUS: box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2); */
-        }
-        
-        .textarea-field {
-            min-height: 160px;
-            resize: vertical;
-            font-family: 'Courier New', monospace;
-            line-height: 1.6;
-        }
-
-        /* CONFIG GRID */
-        .config-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 25px; 
-            width: 100%; 
-            margin-bottom: 40px; 
-        }
-        
-        .config-box { 
-            background: var(--glass); 
-            padding: 35px; 
-            border-radius: 35px; 
-            border: 1px solid rgba(255,255,255,0.08);
-            animation: oceanWave 8s infinite ease-in-out; 
-            transition: 0.4s;
-        }
-        
-        .config-box:hover { 
-            border-color: var(--accent); 
-            transform: scale(1.05); 
-            background: rgba(96, 165, 250, 0.05); 
-        }
-        
-        .config-box h4 {
-            color: var(--accent);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .config-box p {
-            color: #64748b;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        /* SLIDER STYLES - DIHAPUS GLOW */
-        .slider-container {
-            margin-top: 15px;
-        }
-        
-        .slider {
-            width: 100%;
-            height: 8px;
-            background: rgba(96, 165, 250, 0.2);
-            border-radius: 4px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 26px;
-            height: 26px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            /* DIHAPUS: box-shadow: 0 0 20px var(--accent); */
-            transition: all 0.3s;
-        }
-        
-        .slider::-webkit-slider-thumb:hover {
-            background: #3b82f6;
-            transform: scale(1.2);
-        }
-        
-        .slider-value {
-            text-align: center;
-            margin-top: 15px;
-            font-weight: 700;
-            color: var(--accent);
-            font-size: 1.1rem;
-        }
-
-        /* CHECKBOX */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
             gap: 15px;
-            margin-top: 15px;
-            padding: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
             background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .checkbox-container input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            accent-color: var(--accent);
-        }
-
-        /* BUTTONS - DIHAPUS GLOW */
-        .button-group {
-            display: flex;
-            gap: 25px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            flex: 1;
-            min-width: 200px;
-            padding: 25px;
-            border-radius: 25px;
-            border: none;
-            font-size: 1.2rem;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .btn i {
-            font-size: 1.4rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: #fff;
-            /* DIHAPUS: box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4); */
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            transform: translateY(-5px);
-            /* DIHAPUS: box-shadow: 0 25px 50px rgba(59, 130, 246, 0.6); */
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: #fff;
-            /* DIHAPUS: box-shadow: 0 15px 35px rgba(239, 68, 68, 0.4); */
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            transform: translateY(-5px);
-            /* DIHAPUS: box-shadow: 0 25px 50px rgba(239, 68, 68, 0.6); */
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #475569, #334155);
-            color: #fff;
-            /* DIHAPUS: box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); */
-        }
-        
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #334155, #1e293b);
-            transform: translateY(-5px);
-            /* DIHAPUS: box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); */
-        }
-
-        /* LOG CONTAINER - DIHAPUS GLOW */
-        .log-container {
-            margin-top: 50px;
-            background: rgba(10, 15, 30, 0.9);
-            border-radius: 30px;
-            padding: 30px;
-            border: 1px solid rgba(255, 100, 100, 0.3);
-            max-height: 400px;
-            overflow-y: auto;
-            /* DIHAPUS: box-shadow: inset 0 0 30px rgba(0,0,0,0.4); */
-        }
-        
-        .log-title {
-            color: var(--accent);
-            margin-bottom: 25px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .log-entry {
-            padding: 18px;
-            margin-bottom: 15px;
-            background: rgba(255, 50, 50, 0.1);
-            border-left: 4px solid #ff5555;
-            border-radius: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            word-break: break-all;
-            transition: all 0.3s;
-        }
-        
-        .log-entry:hover {
-            transform: translateX(10px);
-            background: rgba(255, 50, 50, 0.2);
-        }
-        
-        .log-success {
-            border-left-color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .log-success:hover {
-            background: rgba(16, 185, 129, 0.2);
-        }
-
-        /* WARNING */
-        .warning {
-            color: #fbbf24;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
-            margin-top: 40px;
-            font-size: 1rem;
-            padding: 20px;
-            background: rgba(251, 191, 36, 0.1);
-            border-radius: 20px;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            width: 100%;
         }
-
-        /* FEATURES GRID */
-        .features-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 25px; 
-            width: 100%; 
-            max-width: 1000px; 
-            margin-top: 30px;
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
         }
-
-        /* SCROLLBAR - DIHAPUS GLOW */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 41, 59, 0.5);
+        .sent { color: #3b82f6; }
+        .success { color: #10b981; }
+        .failed { color: #ef4444; }
+        .active { color: #8b5cf6; }
+        .log {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
             border-radius: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent); /* DIHAPUS: linear-gradient(135deg, var(--accent), #8b5cf6); */
-            border-radius: 10px;
+        .log-entry {
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.05);
         }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6; /* DIHAPUS: linear-gradient(135deg, #3b82f6, #7c3aed); */
-        }
-
-        /* DYPSY BADGE - DIHAPUS GLOW */
-        .dypsy-badge {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--accent);
-            border-radius: 15px;
-            padding: 10px 20px;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 0.9rem;
-            z-index: 1000;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-
-        @media (max-width: 768px) {
-            .main-card {
-                padding: 30px;
-                border-radius: 40px;
-                margin: 10px;
-            }
-            
-            .main-header h1 {
-                font-size: 3rem;
-            }
-            
-            .status-bar {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 20px;
-                gap: 15px;
-            }
-            
-            .config-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .btn {
-                min-width: 100%;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .dypsy-badge {
-                bottom: 10px;
-                right: 10px;
-                font-size: 0.8rem;
-                padding: 8px 15px;
-            }
-        }
+        .success-log { color: #86efac; border-left: 3px solid #10b981; }
+        .error-log { color: #fca5a5; border-left: 3px solid #ef4444; }
+        .info-log { color: #93c5fd; border-left: 3px solid #3b82f6; }
     </style>
 </head>
 <body>
-    <div class="cloud-bg-overlay"></div>
-    
-    <div id="notification-container"></div>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🔗 NGL Message Sender</h1>
+            <p>Send messages anonymously to NGL links</p>
+        </div>
 
-    <header class="main-header">
-        <h1>DYPSY <span>NGLSPAMMER</span></h1>
-        <div class="subtitle">Cloud-Powered Message System</div>
-    </header>
+        <!-- TARGET PANEL -->
+        <div class="panel">
+            <div class="input-group">
+                <label>📝 NGL Link</label>
+                <input type="text" id="nglLink" placeholder="https://ngl.link/username" value="https://ngl.link/">
+            </div>
+            <div class="input-group">
+                <label>👤 Target Username</label>
+                <input type="text" id="targetUsername" placeholder="username (without @)">
+            </div>
+            <div class="input-group">
+                <label>💬 Messages (one per line)</label>
+                <textarea id="messages">Hello there
+How are you?
+What's up?
+Tell me a secret
+Who do you like?
+What are you doing?
+Guess what?
+I have a question
+Can you keep a secret?
+What's your favorite color?</textarea>
+            </div>
+            <div class="input-group">
+                <label>⚡ Attack Mode</label>
+                <select id="attackMode">
+                    <option value="slow">Slow (3-5 seconds)</option>
+                    <option value="normal" selected>Normal (1-3 seconds)</option>
+                    <option value="fast">Fast (0.5-2 seconds)</option>
+                </select>
+            </div>
+        </div>
 
-    <div class="main-card">
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-label">STATUS</div>
-                <div class="status-value" id="status">READY</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">SENT</div>
-                <div class="status-value" id="sentCount">0</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">SUCCESS</div>
-                <div class="status-value" id="successRate">0%</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">THREADS</div>
-                <div class="status-value" id="threadCount">0</div>
-            </div>
-        </div>
-        
-        <div class="input-group">
-            <label class="input-label">
-                <i class="fas fa-comment-dots"></i> MESSAGES (One per line)
-            </label>
-            <textarea class="input-field textarea-field" id="messages" rows="6">
-Who am I?
-Guess who?
-DYPSY NGLSPAMMER v3.0</textarea>
-        </div>
-        
-        <div class="config-grid">
-            <div class="config-box" style="animation-delay: 0s;">
-                <h4><i class="fas fa-paper-plane"></i> MESSAGE COUNT</h4>
-                <div class="slider-container">
-                    <input type="range" class="slider" id="messageCount" min="10" max="50000" value="500">
-                    <div class="slider-value">
-                        <span id="countValue">500</span> messages
-                    </div>
-                </div>
-                <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Set how many messages to send</p>
-            </div>
-            
-            <div class="config-box" style="animation-delay: 1s;">
-                <h4><i class="fas fa-bolt"></i> THREADS</h4>
-                <div class="slider-container">
-                    <input type="range" class="slider" id="threads" min="1" max="200" value="50">
-                    <div class="slider-value">
-                        <span id="threadValue">50</span> threads
-                    </div>
-                </div>
-                <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">More threads = faster sending speed</p>
-            </div>
-            
-            <div class="config-box" style="animation-delay: 2s;">
-                <h4><i class="fas fa-clock"></i> DELAY</h4>
-                <div class="slider-container">
-                    <input type="range" class="slider" id="delay" min="0" max="5000" value="50">
-                    <div class="slider-value">
-                        <span id="delayValue">50</span> ms
-                    </div>
-                </div>
-                <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Delay between each message</p>
-            </div>
-            
-            <div class="config-box" style="animation-delay: 3s;">
-                <h4><i class="fas fa-cog"></i> ADVANCED SETTINGS</h4>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="useProxy" checked>
-                    <label>Use Cloud Proxies</label>
-                </div>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="randomizeUA" checked>
-                    <label>Randomize User Agents</label>
-                </div>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="autoRetry" checked>
-                    <label>Auto Retry Failed Messages</label>
-                </div>
-                <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Advanced cloud features for better performance</p>
-            </div>
-        </div>
-        
-        <div class="button-group">
-            <button class="btn btn-primary" onclick="startAttack()">
-                <i class="fas fa-rocket"></i> START SPAMMING
-            </button>
-            <button class="btn btn-danger" onclick="stopAttack()">
-                <i class="fas fa-stop"></i> STOP SPAMMING
-            </button>
-            <button class="btn" onclick="clearLogs()" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff;">
-                <i class="fas fa-trash"></i> CLEAR LOGS
-            </button>
-        </div>
-        
-        <div class="log-container">
-            <div class="log-title">
-                <i class="fas fa-terminal"></i> DYPSY LOG
-            </div>
-            <div id="logArea">
-                <div class="log-entry log-success">
-                    [SYSTEM] DYPSY NGLSPAMMER v3.0 Initialized
-                </div>
-                <div class="log-entry">
-                    [SYSTEM] Ready for message deployment
-                </div>
-                <div class="log-entry">
-                    [SYSTEM] Enter messages and click START SPAMMING
-                </div>
-            </div>
-        </div>
-        
-        <div class="warning">
-            <i class="fas fa-exclamation-triangle"></i> FOR EDUCATIONAL PURPOSES ONLY | USE RESPONSIBLY
-        </div>
-    </div>
+        <!-- CONTROL BUTTONS -->
+        <button class="btn btn-primary" id="startBtn" onclick="startAttack()">
+            🚀 START SENDING
+        </button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopAttack()" disabled>
+            ⏹️ STOP
+        </button>
 
-    <div class="features-grid">
-        <div class="config-box" style="animation-delay: 1s;">
-            <h4><i class="fas fa-server"></i> CLOUD INFRASTRUCTURE</h4>
-            <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Powered by distributed cloud servers with 99.9% uptime guarantee and global CDN.</p>
+        <!-- STATISTICS -->
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number sent" id="sentCount">0</div>
+                <div>Sent</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number success" id="successCount">0</div>
+                <div>Success</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number failed" id="failedCount">0</div>
+                <div>Failed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number active" id="activeWorkers">0</div>
+                <div>Active</div>
+            </div>
         </div>
-        <div class="config-box" style="animation-delay: 2s;">
-            <h4><i class="fas fa-shield-alt"></i> ANONYMOUS PROXY</h4>
-            <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Rotating proxies and VPN protection to ensure complete anonymity and security.</p>
-        </div>
-        <div class="config-box" style="animation-delay: 3s;">
-            <h4><i class="fas fa-tachometer-alt"></i> HIGH SPEED</h4>
-            <p style="color:#64748b; font-size: 0.9rem; margin-top:15px;">Multi-threaded architecture capable of sending thousands of messages per minute.</p>
-        </div>
-    </div>
 
-    <div class="dypsy-badge">
-        <i class="fas fa-cloud"></i> DYPSY NGLSPAMMER v3.0
+        <!-- LIVE LOG -->
+        <div class="log" id="logContainer">
+            <div class="log-entry info-log">[System] Ready to start</div>
+        </div>
     </div>
 
     <script>
-        let isRunning = false;
-        let sentMessages = 0;
-        let successMessages = 0;
-        let currentThreads = 0;
-        let totalMessagesToSend = 0;
+        // ============ KONFIGURASI ============
+        // 🔧 NANTI GANTI SETELAH BUAT BACKEND
+        const BACKEND_URL = "https://YOUR-BACKEND.railway.app"; 
         
-        // DOM Elements
-        const messageCountSlider = document.getElementById('messageCount');
-        const countValue = document.getElementById('countValue');
-        const threadsSlider = document.getElementById('threads');
-        const threadValue = document.getElementById('threadValue');
-        const delaySlider = document.getElementById('delay');
-        const delayValue = document.getElementById('delayValue');
-        const logArea = document.getElementById('logArea');
-        const sentCount = document.getElementById('sentCount');
-        const successRate = document.getElementById('successRate');
-        const threadCount = document.getElementById('threadCount');
-        const status = document.getElementById('status');
-        
-        // NOTIFICATION SYSTEM
-        function showNotif(msg, icon = 'fa-info-circle') {
-            const container = document.getElementById('notification-container');
-            const notif = document.createElement('div');
-            notif.className = 'dypsy-notif';
-            notif.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
-            container.appendChild(notif);
-            
-            setTimeout(() => notif.classList.add('show'), 100);
-            setTimeout(() => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
-            }, 3000);
-        }
-        
-        // Update slider values
-        messageCountSlider.oninput = function() {
-            countValue.textContent = this.value;
-        }
-        
-        threadsSlider.oninput = function() {
-            threadValue.textContent = this.value;
-        }
-        
-        delaySlider.oninput = function() {
-            delayValue.textContent = this.value;
-        }
-        
-        // Log function
+        // ============ VARIABEL ============
+        let isAttacking = false;
+        let attackInterval = null;
+        let stats = {
+            sent: 0,
+            success: 0,
+            failed: 0
+        };
+
+        // ============ FUNGSI LOG ============
         function addLog(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = document.createElement('div');
-            logEntry.className = `log-entry ${type === 'success' ? 'log-success' : ''}`;
-            logEntry.textContent = `[${timestamp}] ${message}`;
-            logArea.prepend(logEntry);
+            const logContainer = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}-log`;
             
-            // Keep only last 20 logs
-            const logs = logArea.querySelectorAll('.log-entry');
-            if (logs.length > 20) {
-                logs[logs.length - 1].remove();
-            }
+            const time = new Date().toLocaleTimeString();
+            entry.textContent = `[${time}] ${message}`;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
         }
-        
-        // Clear logs
-        function clearLogs() {
-            logArea.innerHTML = '';
-            addLog('[SYSTEM] Logs cleared', 'success');
-            showNotif('Logs cleared!', 'fa-trash');
-        }
-        
-        // Update stats
+
+        // ============ UPDATE STATS ============
         function updateStats() {
-            sentCount.textContent = sentMessages;
-            const rate = sentMessages > 0 ? Math.round((successMessages / sentMessages) * 100) : 0;
-            successRate.textContent = `${rate}%`;
-            threadCount.textContent = currentThreads;
-            
-            // Update status if all messages sent
-            if (sentMessages >= totalMessagesToSend && totalMessagesToSend > 0 && isRunning) {
-                stopAttack();
-                addLog(`✅ Mission completed! Sent ${sentMessages} messages successfully`, 'success');
-            }
+            document.getElementById('sentCount').textContent = stats.sent;
+            document.getElementById('successCount').textContent = stats.success;
+            document.getElementById('failedCount').textContent = stats.failed;
         }
-        
-        // Generate random user agent
-        function getRandomUserAgent() {
-            const agents = [
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-                'Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
-                'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/120.0'
-            ];
-            return agents[Math.floor(Math.random() * agents.length)];
-        }
-        
-        // Simulate sending message
-        async function sendMessage(message, threadId) {
-            currentThreads++;
-            updateStats();
-            
+
+        // ============ KIRIM PESAN ============
+        async function sendMessage(target, message) {
             try {
-                // Simulate network delay
-                const networkDelay = 100 + Math.random() * 400;
-                await new Promise(resolve => setTimeout(resolve, networkDelay));
+                // SIMULASI DULU (nanti ganti dengan backend real)
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Random success/failure for simulation
-                const successRateValue = document.getElementById('useProxy').checked ? 0.92 : 0.78;
-                const success = Math.random() < successRateValue;
+                // 80% success rate simulation
+                const success = Math.random() < 0.8;
                 
-                sentMessages++;
                 if (success) {
-                    successMessages++;
-                    if (sentMessages % 10 === 0) {
-                        addLog(`DYPSY Thread ${threadId}: Successfully sent ${sentMessages} messages`, 'success');
-                    }
+                    addLog(`✓ Simulated success to @${target}`, 'success');
                 } else {
-                    if (document.getElementById('autoRetry').checked) {
-                        addLog(`DYPSY Thread ${threadId}: Proxy failed - Auto retrying...`);
-                        // Simulate retry
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                        sentMessages++;
-                        successMessages++;
-                    } else {
-                        addLog(`DYPSY Thread ${threadId}: Failed to send message`);
-                    }
+                    addLog(`✗ Simulated failed`, 'error');
                 }
                 
-                updateStats();
+                return success;
                 
             } catch (error) {
-                addLog(`DYPSY Thread ${threadId}: Error - ${error.message}`);
-            } finally {
-                currentThreads--;
-                updateStats();
+                console.error('Error:', error);
+                return false;
             }
         }
-        
-        // Main attack function
+
+        // ============ MULAI ATTACK ============
         async function startAttack() {
-            if (isRunning) {
-                showNotif('Already running!', 'fa-exclamation-triangle');
+            const target = document.getElementById('targetUsername').value.trim();
+            const messagesText = document.getElementById('messages').value.trim();
+            const mode = document.getElementById('attackMode').value;
+            
+            // Validasi
+            if (!target) {
+                alert('Masukkan username target!');
                 return;
             }
             
-            const messageText = document.getElementById('messages').value;
-            totalMessagesToSend = parseInt(messageCountSlider.value);
-            const maxThreads = parseInt(threadsSlider.value);
-            const delay = parseInt(delaySlider.value);
-            const useProxy = document.getElementById('useProxy').checked;
-            const randomizeUA = document.getElementById('randomizeUA').checked;
-            
-            if (totalMessagesToSend < 10) {
-                showNotif('Minimum 10 messages!', 'fa-exclamation-triangle');
-                addLog('[ERROR] Minimum 10 messages required');
-                return;
-            }
-            
-            isRunning = true;
-            sentMessages = 0;
-            successMessages = 0;
-            currentThreads = 0;
-            
-            status.textContent = 'SPAMMING';
-            status.style.color = '#10b981';
-            
-            showNotif('DYPSY Attack Started!', 'fa-rocket');
-            addLog(`🚀 DYPSY ATTACK INITIATED`);
-            addLog(`📊 Messages to send: ${totalMessagesToSend}`);
-            addLog(`⚡ Threads: ${maxThreads}`);
-            addLog(`🔁 Proxy: ${useProxy ? 'ENABLED' : 'DISABLED'}`);
-            addLog(`🔄 User Agent: ${randomizeUA ? 'RANDOMIZED' : 'DEFAULT'}`);
-            
-            const messages = messageText.split('\n').filter(m => m.trim() !== '');
+            const messages = messagesText.split('\n')
+                .map(m => m.trim())
+                .filter(m => m.length > 0);
             
             if (messages.length === 0) {
-                showNotif('No messages entered!', 'fa-exclamation-circle');
-                addLog('[ERROR] No messages to send');
-                isRunning = false;
-                status.textContent = 'READY';
+                alert('Masukkan minimal 1 pesan!');
                 return;
             }
+
+            // Set delay
+            const delays = {
+                slow: { min: 3000, max: 5000 },
+                normal: { min: 1000, max: 3000 },
+                fast: { min: 500, max: 2000 }
+            };
+            const delay = delays[mode] || delays.normal;
+
+            // Start attack
+            isAttacking = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
             
-            // Create worker threads
-            const threads = [];
-            for (let i = 0; i < maxThreads; i++) {
-                const threadPromise = (async function(threadId) {
-                    while (isRunning && sentMessages < totalMessagesToSend) {
-                        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                        await sendMessage(randomMessage, threadId + 1);
-                        
-                        // Random delay between messages
-                        if (delay > 0) {
-                            const randomDelay = delay + Math.random() * delay * 0.3;
-                            await new Promise(resolve => setTimeout(resolve, randomDelay));
-                        }
-                    }
-                })(i);
-                threads.push(threadPromise);
+            addLog(`🚀 Attack started on @${target}`, 'info');
+            addLog(`Mode: ${mode}, Messages: ${messages.length}`, 'info');
+            addLog(`⚠️ SIMULATION MODE - Backend not configured`, 'warning');
+
+            let messageIndex = 0;
+            
+            attackInterval = setInterval(async () => {
+                if (!isAttacking) return;
+                
+                const message = messages[messageIndex % messages.length];
+                stats.sent++;
+                updateStats();
+                
+                const success = await sendMessage(target, message);
+                
+                if (success) {
+                    stats.success++;
+                } else {
+                    stats.failed++;
+                }
+                
+                updateStats();
+                messageIndex++;
+                
+            }, Math.random() * (delay.max - delay.min) + delay.min);
+        }
+
+        // ============ STOP ATTACK ============
+        function stopAttack() {
+            isAttacking = false;
+            
+            if (attackInterval) {
+                clearInterval(attackInterval);
+                attackInterval = null;
             }
             
-            // Wait for all threads to complete
-            Promise.all(threads).then(() => {
-                if (isRunning) {
-                    isRunning = false;
-                    status.textContent = 'COMPLETED';
-                    showNotif('Attack completed!', 'fa-check-circle');
-                }
-            });
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            
+            addLog('⏹️ Attack stopped', 'info');
+            addLog(`📊 Final: ${stats.success} success, ${stats.failed} failed`, 'info');
         }
-        
-        // Stop attack
-        function stopAttack() {
-            if (!isRunning) return;
-            
-            isRunning = false;
-            status.textContent = 'STOPPED';
-            status.style.color = '#fbbf24';
-            showNotif('Attack stopped!', 'fa-stop-circle');
-            addLog('⛔ DYPSY Attack stopped by user');
-            addLog(`📈 Final stats: ${sentMessages} sent, ${successMessages} successful`);
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set initial slider values
-            countValue.textContent = messageCountSlider.value;
-            threadValue.textContent = threadsSlider.value;
-            delayValue.textContent = delaySlider.value;
-            
-            // DIHAPUS: efek glow pada status
-            const statusElement = document.getElementById('status');
-            
-            // DIHAPUS: interval untuk efek glow pada status
-            showNotif('DYPSY NGLSPAMMER Ready!', 'fa-cloud');
-            
-            // Add some initial logs
-            setTimeout(() => {
-                addLog('[SYSTEM] Cloud infrastructure initialized', 'success');
-            }, 500);
-            
-            setTimeout(() => {
-                addLog('[SYSTEM] Proxy network ready', 'success');
-            }, 1000);
+
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('✅ System initialized', 'info');
+            addLog('⚠️ Backend not configured - Running in SIMULATION mode', 'warning');
+            addLog('🔧 To enable real attack: Deploy backend server', 'info');
+            updateStats();
         });
-        
-        // Auto-update stats
-        setInterval(updateStats, 500);
     </script>
 </body>
-                        </html>
+</html>
