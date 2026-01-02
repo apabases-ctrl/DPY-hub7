@@ -1,376 +1,537 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>NGL Spammer Elite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DYP IQC - Luxury Visualizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Courier New', monospace;
-            background: #0a0a0a;
-            color: #00ff00;
-            padding: 20px;
+        :root { 
+            --blue: #00d2ff; 
+            --purple: #3a7bd5; 
+            --pink: #ff4081;
+            --green: #10b981;
+            --glass: rgba(255, 255, 255, 0.05); 
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        
+        @keyframes extremeFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(1.2deg); }
+            50% { transform: translateY(0) rotate(-1.2deg); }
+            75% { transform: translateY(15px) rotate(0.6deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        body { 
+            background: radial-gradient(circle at top right, #0f172a, #020617, #000); 
+            color: #fff; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            min-height: 100vh; 
+            padding: 40px 15px; 
+            display: flex; 
+            justify-content: center; 
             overflow-x: hidden;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 2px solid #00ff00;
-            padding: 30px;
-            border-radius: 10px;
-            background: rgba(0, 255, 0, 0.05);
+
+        .container { 
+            width: 100%; 
+            max-width: 800px; 
+            perspective: 1200px; 
         }
-        h1 {
+        
+        .main-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.12); 
+            border-radius: 35px; 
+            padding: 30px; 
+            animation: extremeFloat 9s infinite ease-in-out;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        }
+
+        .dash-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin: 20px 0; 
+        }
+        .stat-box { 
+            background: rgba(0,0,0,0.4); 
+            padding: 15px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.08); 
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #00ff00;
-            font-size: 28px;
         }
-        .input-group {
-            margin-bottom: 20px;
+        .stat-box b { 
+            color: var(--blue); 
+            font-size: 1rem; 
+            text-shadow: 0 0 10px var(--blue); 
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #00ff00;
-            font-weight: bold;
+        .stat-box span { 
+            font-size: 0.65rem; 
+            color: #64748b; 
+            text-transform: uppercase; 
         }
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            background: #111;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            border-radius: 5px;
-            font-size: 14px;
+
+        /* INPUT SECTION */
+        .input-wrapper { 
+            display: flex; 
+            background: rgba(0,0,0,0.6); 
+            padding: 6px; 
+            border-radius: 18px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            gap: 8px;
+            align-items: center;
         }
-        textarea {
-            height: 100px;
-            resize: vertical;
+        input { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            padding: 10px 15px; 
+            color: #fff; 
+            outline: none; 
+            font-size: 0.9rem; 
+            min-width: 0; 
         }
-        .button {
-            background: #00ff00;
-            color: #000;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
+        button { 
+            background: linear-gradient(135deg, var(--blue), var(--purple)); 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 14px; 
+            color: #fff; 
+            font-weight: 800; 
+            cursor: pointer; 
+            font-size: 0.8rem; 
             transition: 0.3s;
+            white-space: nowrap; 
         }
-        .button:hover {
-            background: #00cc00;
-            box-shadow: 0 0 20px #00ff00;
+        button:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 15px var(--blue); 
         }
-        .button-stop {
-            background: #ff0000;
-            color: white;
+
+        /* RESULT SECTION */
+        .result-section { 
+            margin-top: 20px; 
+            background: rgba(0,0,0,0.5); 
+            border-radius: 25px; 
+            padding: 20px; 
+            border: 1px solid rgba(255,255,255,0.08); 
+            max-height: 500px; 
+            overflow: auto;
+            display: none;
         }
-        .button-stop:hover {
-            background: #cc0000;
+        
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
-        .stats {
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .image-container {
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .generated-image {
+            width: 100%;
+            display: block;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding: 15px;
-            background: #111;
-            border-radius: 5px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
         }
-        .stat-box {
-            text-align: center;
+        
+        .action-btn:hover {
+            transform: scale(1.05);
         }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00ff00;
+        
+        .download-btn {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(58, 123, 213, 0.1));
         }
-        .stat-label {
-            font-size: 12px;
-            color: #aaa;
+        
+        .new-btn {
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.2), rgba(58, 123, 213, 0.1));
         }
-        .logs {
-            margin-top: 20px;
-            background: #111;
-            padding: 15px;
-            border-radius: 5px;
-            height: 150px;
-            overflow-y: auto;
-            font-size: 12px;
+        
+        /* ERROR MESSAGE */
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #f8d7da;
+            padding: 12px 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
         }
-        .log-entry {
-            padding: 5px 0;
-            border-bottom: 1px solid #222;
+        
+        .error-message.active {
+            display: flex;
         }
-        .log-success { color: #00ff00; }
-        .log-error { color: #ff0000; }
-        .log-info { color: #00aaff; }
-        .warning {
-            background: #ff9900;
-            color: #000;
-            padding: 15px;
-            border-radius: 5px;
+        
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--blue);
+            border-right: 4px solid var(--purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
-            font-weight: bold;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: var(--blue);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(20, 20, 30, 0.95);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.5s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 350px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            font-size: 1.2rem;
+            color: var(--green);
+        }
+        
+        /* FOOTER */
+        .footer {
             text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
-        .proxy-box {
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+        
+        .brand {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
         }
-        .hidden { display: none; }
+        
+        .tagline {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .main-card {
+                padding: 25px 20px;
+                border-radius: 25px;
+            }
+            
+            .dash-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .notification {
+                top: 20px;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 NGL SPAMMER V3.0 - RATE LIMIT BYPASS</h1>
-        
-        <div class="warning">
-            ⚠️ HANYA UNTUK EDUKASI! Gunakan hanya pada akun yang Anda miliki
-        </div>
-
-        <div class="input-group">
-            <label>🔗 NGL Link Target:</label>
-            <input type="text" id="nglLink" placeholder="https://ngl.link/username" value="https://ngl.link/">
-        </div>
-
-        <div class="input-group">
-            <label>💬 Pesan untuk dikirim:</label>
-            <textarea id="message">Coba tebak siapa ini? 😈</textarea>
-        </div>
-
-        <div class="input-group">
-            <label>🔢 Jumlah Spam (Max 5000):</label>
-            <input type="number" id="count" value="100" min="1" max="5000">
-        </div>
-
-        <div class="input-group">
-            <label>⚡ Mode Spam:</label>
-            <select id="mode">
-                <option value="fast">Fast Mode (25ms delay)</option>
-                <option value="stealth">Stealth Mode (random 1-5s delay)</option>
-                <option value="ultra">Ultra Mode (multiple requests)</option>
-            </select>
-        </div>
-
-        <div class="proxy-box">
-            <label>🌐 Proxy Settings (optional):</label>
-            <textarea id="proxies" placeholder="http://proxy1:port\nhttp://proxy2:port\nLeave empty for no proxy"></textarea>
-        </div>
-
-        <button class="button" id="startBtn" onclick="startSpam()">🚀 START SPAM ATTACK</button>
-        <button class="button button-stop" id="stopBtn" onclick="stopSpam()">🛑 STOP ATTACK</button>
-
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-value" id="sentCount">0</div>
-                <div class="stat-label">TERKIRIM</div>
+        <header style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, #fff, var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                DYP IQC
+            </h1>
+            <div style="font-size: 0.9rem; color: #64748b; letter-spacing: 3px; margin-top: 5px; text-transform: uppercase;">
+                LUXURY VISUALIZER
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="failedCount">0</div>
-                <div class="stat-label">GAGAL</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="speed">0/s</div>
-                <div class="stat-label">SPEED</div>
-            </div>
-        </div>
+        </header>
 
-        <div class="logs" id="logContainer">
-            <div class="log-entry log-info">System ready. Enter NGL link and press START</div>
+        <div class="main-card">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" style="width:100%; height:150px; object-fit:cover; border-radius:25px; margin-bottom:15px; opacity: 0.7;">
+            
+            <div class="dash-grid">
+                <div class="stat-box"><span>Status</span><br><b>Online</b></div>
+                <div class="stat-box"><span>Version</span><br><b>v5.0</b></div>
+                <div class="stat-box"><span>API</span><br><b style="color: var(--green);">Ready</b></div>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="text" id="text" placeholder="Enter your message...">
+                <button id="generateBtn">GENERATE</button>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">Please enter a message</span>
+            </div>
+            
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection">
+                <div class="image-container">
+                    <img id="generatedImage" class="generated-image" src="" alt="Generated Image">
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        DOWNLOAD
+                    </button>
+                    <button class="action-btn new-btn" id="newBtn">
+                        <i class="fas fa-redo"></i>
+                        NEW
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="brand">DYP STUDIO</div>
+                <div class="tagline">Premium Image Generator</div>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">PROCESSING</p>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <h3 style="font-size: 1rem; margin-bottom: 5px;">SUCCESS!</h3>
+            <p style="font-size: 0.85rem; opacity: 0.8;">Image generated successfully</p>
+        </div>
+    </div>
+    
     <script>
-        let isSpamming = false;
-        let sent = 0;
-        let failed = 0;
-        let startTime = null;
-        let currentProxies = [];
-        let proxyIndex = 0;
-
-        function addLog(message, type = 'info') {
-            const log = document.getElementById('logContainer');
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
+        // DOM Elements
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const resultSection = document.getElementById('resultSection');
+        const generatedImage = document.getElementById('generatedImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const newBtn = document.getElementById('newBtn');
+        const textInput = document.getElementById('text');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const notification = document.getElementById('notification');
+        
+        // Variables
+        let currentImageUrl = '';
+        
+        // Show notification
+        function showNotification() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
-
-        function updateStats() {
-            document.getElementById('sentCount').textContent = sent;
-            document.getElementById('failedCount').textContent = failed;
+        
+        // Show error
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('active');
             
-            if (startTime) {
-                const elapsed = (Date.now() - startTime) / 1000;
-                const speed = elapsed > 0 ? (sent / elapsed).toFixed(1) : 0;
-                document.getElementById('speed').textContent = `${speed}/s`;
-            }
+            setTimeout(() => {
+                errorMessage.classList.remove('active');
+            }, 4000);
         }
-
-        function getRandomUserAgent() {
-            const agents = [
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15',
-                'Mozilla/5.0 (Linux; Android 12; SM-S901U) AppleWebKit/537.36',
-                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-                'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0'
-            ];
-            return agents[Math.floor(Math.random() * agents.length)];
-        }
-
-        function getRandomIP() {
-            return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-        }
-
-        async function sendNGLRequest(attempt = 0) {
-            if (!isSpamming) return false;
-
-            const link = document.getElementById('nglLink').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const mode = document.getElementById('mode').value;
-
-            if (!link.includes('ngl.link/')) {
-                addLog('Invalid NGL link!', 'error');
-                return false;
-            }
-
-            const username = link.split('/').pop();
-            const apiUrl = `https://ngl.link/api/submit`;
-
-            const formData = new FormData();
-            formData.append('username', username);
-            formData.append('question', message);
-            formData.append('deviceId', `web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-            formData.append('gameSlug', '');
-            formData.append('referrer', '');
-
-            const headers = {
-                'User-Agent': getRandomUserAgent(),
-                'X-Forwarded-For': getRandomIP(),
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Origin': 'https://ngl.link',
-                'Referer': link,
-                'DNT': Math.random() > 0.5 ? '1' : '0'
-            };
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    body: formData,
-                    headers: headers,
-                    mode: 'cors',
-                    credentials: 'omit',
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (response.status === 200 || response.status === 201) {
-                    sent++;
-                    addLog(`✅ Sent to ${username}: "${message.substring(0, 30)}..."`, 'success');
-                    return true;
-                } else if (response.status === 429) {
-                    // Rate limit hit - change strategy
-                    addLog(`⚠️ Rate limit detected, switching mode...`, 'info');
-                    await new Promise(resolve => setTimeout(resolve, 5000));
-                    return await sendNGLRequest(attempt + 1);
-                } else {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-            } catch (error) {
-                failed++;
-                addLog(`❌ Failed: ${error.message}`, 'error');
-                
-                if (attempt < 3) {
-                    await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)));
-                    return await sendNGLRequest(attempt + 1);
-                }
-                return false;
-            }
-        }
-
-        async function spamLoop() {
-            const total = parseInt(document.getElementById('count').value) || 100;
-            const mode = document.getElementById('mode').value;
-
-            startTime = Date.now();
-
-            for (let i = 0; i < total && isSpamming; i++) {
-                await sendNGLRequest();
-
-                // Apply delay based on mode
-                if (mode === 'fast') {
-                    await new Promise(resolve => setTimeout(resolve, 25 + Math.random() * 50));
-                } else if (mode === 'stealth') {
-                    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 4000));
-                } else if (mode === 'ultra') {
-                    // Send 3 requests at once
-                    await Promise.all([
-                        sendNGLRequest(),
-                        sendNGLRequest(),
-                        sendNGLRequest()
-                    ]);
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-
-                updateStats();
-
-                // Every 10 requests, switch user agent
-                if (i % 10 === 0) {
-                    addLog(`🔄 Rotating user agent...`, 'info');
-                }
-            }
-
-            if (isSpamming) {
-                addLog(`🎯 SPAM COMPLETE! Sent ${sent}/${total} messages`, 'success');
-                isSpamming = false;
-                document.getElementById('startBtn').disabled = false;
-            }
-        }
-
-        function startSpam() {
-            if (isSpamming) return;
-
-            const link = document.getElementById('nglLink').value.trim();
-            if (!link) {
-                addLog('Please enter NGL link!', 'error');
+        
+        // Generate image
+        generateBtn.addEventListener('click', async function() {
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showError('Please enter a message first');
                 return;
             }
-
-            isSpamming = true;
-            sent = 0;
-            failed = 0;
-            document.getElementById('startBtn').disabled = true;
             
-            addLog(`🚀 Starting spam attack to: ${link}`, 'info');
-            addLog(`⚡ Mode: ${document.getElementById('mode').value}`, 'info');
+            // Start loading
+            loadingOverlay.classList.add('active');
+            errorMessage.classList.remove('active');
             
-            spamLoop();
-        }
-
-        function stopSpam() {
-            isSpamming = false;
-            addLog('🛑 Spam stopped manually', 'info');
-            document.getElementById('startBtn').disabled = false;
-        }
-
-        // Auto-detect if user is on mobile
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            addLog('📱 Mobile device detected. Using mobile user agents.', 'info');
-        }
-
-        addLog('System initialized. Ready to spam.', 'info');
+            try {
+                // API call
+                const apiUrl = `https://api.elrayyxml.web.id/api/maker/iqc?text=${encodeURIComponent(text)}`;
+                
+                console.log('Fetching from API:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                // Get image
+                const imageBlob = await response.blob();
+                currentImageUrl = URL.createObjectURL(imageBlob);
+                generatedImage.src = currentImageUrl;
+                
+                // Wait for image to load
+                await new Promise((resolve, reject) => {
+                    generatedImage.onload = resolve;
+                    generatedImage.onerror = () => reject(new Error('Failed to load image'));
+                });
+                
+                // Success
+                loadingOverlay.classList.remove('active');
+                resultSection.classList.add('active');
+                showNotification();
+                
+                // Auto scroll to result
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadingOverlay.classList.remove('active');
+                showError('Failed to generate image. Please try again.');
+            }
+        });
+        
+        // Download image
+        downloadBtn.addEventListener('click', function() {
+            if (!currentImageUrl) return;
+            
+            const link = document.createElement('a');
+            link.href = currentImageUrl;
+            const timestamp = new Date().toISOString().replace(/[.:]/g, '-');
+            link.download = `DYP_IQC_${timestamp}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show quick notification
+            const originalText = notification.querySelector('p').textContent;
+            notification.querySelector('p').textContent = 'Download started...';
+            showNotification();
+            setTimeout(() => {
+                notification.querySelector('p').textContent = originalText;
+            }, 1000);
+        });
+        
+        // New image
+        newBtn.addEventListener('click', function() {
+            resultSection.classList.remove('active');
+            textInput.value = '';
+            textInput.focus();
+            
+            // Scroll to input
+            textInput.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Enter key support
+        textInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+        
+        // Initialize
+        window.addEventListener('load', function() {
+            textInput.focus();
+            
+            // Update stats
+            const statusBoxes = document.querySelectorAll('.stat-box b');
+            setInterval(() => {
+                // Random ping simulation
+                const randomPing = Math.floor(Math.random() * 30) + 10;
+                if (statusBoxes[0]) statusBoxes[0].textContent = `${randomPing}ms`;
+            }, 3000);
+        });
     </script>
 </body>
 </html>
